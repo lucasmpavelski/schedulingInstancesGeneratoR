@@ -50,16 +50,14 @@ check_instance <- function(object) {
 
 #' Scheduling instance class
 #'
-#' @slot distribution_type integer.
-#' @slot correlation_type integer.
-#' @slot correlation numeric.
-#' @slot seed integer.
+#' @slot .Data unrelated, from matrix class
+#' @slot distribution_type processing times distribution type (uniform, exponential, binomial or erlang)
+#' @slot correlation_type processing times correlation type (random, machine-correlated, job-correlated)
+#' @slot correlation correlation value (between 0 and 1)
 #'
 #' @return
 #' @export Instance
 #' @exportClass Instance
-#'
-#' @examples
 setClass(
   'Instance',
   contains = 'matrix',
@@ -73,22 +71,27 @@ setClass(
 
 #' Scheduling instance constructor
 #'
-#' @slot distribution_type integer.
-#' @slot correlation_type integer.
-#' @slot correlation numeric.
-#' @slot seed integer.
+#' @param data processing time data
+#' @param nrow number of jobs
+#' @param ncol number of machines
+#' @param byrow processing times order by machine (default) or by job
+#' @param dimnames name of the processing times matrix dimentions
+#' @param distribution_type processing times distribution type (uniform, exponential, binomial or erlang)
+#' @param correlation_type processing times correlation type (random, machine-correlated, job-correlated)
+#' @param correlation correlation value (between 0 and 1)
 #'
-#' @return
+#' @return a instance with given processing times
 #' @export Instance
-#'
+#' @importFrom methods new
 #' @examples
-Instance <- function(distribution_type = DISTRIBUTION_TYPES$UNIFORM,
+#' Instance(1:10, 5, 2, distribution_type = 'uniform')
+Instance <- function(data = NA, nrow = 1, ncol = 1, byrow = FALSE, dimnames = NULL,
+                     distribution_type = DISTRIBUTION_TYPES$UNIFORM,
                      correlation_type = CORRELATION_TYPES$JOB_CORRELATED,
-                     correlation = NA_real_,
-                     ...) {
+                     correlation = 0.0) {
   new(
     'Instance',
-    ...,
+    data, nrow, ncol, byrow, dimnames,
     distribution_type = distribution_type,
     correlation_type = correlation_type,
     correlation = correlation
@@ -97,12 +100,13 @@ Instance <- function(distribution_type = DISTRIBUTION_TYPES$UNIFORM,
 
 #' Plot instance as pairs with correlation.
 #'
-#' @param Instance
+#' @param Instance instance to be plotted.
 #'
-#' @return
 #' @export
+#' @importFrom graphics pairs par strwidth text
 #'
 #' @examples
+#' plot(generateFSPInstance(100, 3))
 setMethod('plot', 'Instance', function(x, y, ...) {
   panel.cor <- function(x,
                         y,

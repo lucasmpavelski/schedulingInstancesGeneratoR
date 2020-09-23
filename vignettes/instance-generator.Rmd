@@ -1,0 +1,80 @@
+---
+title: "Flowshop instances generator"
+author: "Lucas Marcondes Pavelski"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Flowshop instances generator}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library("schedulingInstancesGeneratoR")
+
+set.seed(123)
+```
+
+## Distributions
+
+Instances can be generated with different sizes (number of jobs and machines). The processing times are positive integers with mean value 50.
+
+There are four types of distributions of processing times:
+
+- Uniform distribution: with minimum 1 and maximum 99 time units (Taillard, 1993);
+- Binomial distribution: with 50 tries of 1/2 probability (Baker and Trietsch, 2009);
+- Exponential distribution: with rate 1/50 (Baker and Trietsch, 2009);
+- Erlang distribution: with shape 4 and rate 4/50 (Framinan et al, 2009);
+
+The shape of each distribution can be seen below:
+
+```{r, fig.show='hold'}
+for (distribution in c('uniform', 'binomial', 'exponential', 'erlang')) {
+  instance <- generateFSPInstance(
+    no_jobs = 100,
+    no_machines = 10,
+    distribution_type = distribution
+  )
+  plot(density(instance), main = distribution)
+}
+```
+
+## Correlations
+
+Machine- and job-correlations are used to produce structured instances proposed by Watson et. al. (1999) [2]. In case of machine-correlated (job-correlated) instances, all pairs of machines (jobs) processing times have approximately the given correlation.
+
+```{r, fig.show='hold'}
+# par(mar = rep(0, 4))
+uniform_job_corr_instance <- generateFSPInstance(
+  no_jobs = 100,
+  no_machines = 2,
+  distribution_type = 'uniform',
+  correlation_type = 'job-correlated',
+  correlation = 0.95
+)
+plot(uniform_job_corr_instance)
+
+uniform_mach_corr_instance <- generateFSPInstance(
+  no_jobs = 2,
+  no_machines = 100,
+  distribution_type = 'uniform',
+  correlation_type = 'machine-correlated',
+  correlation = 0.95
+)
+plot(t(uniform_mach_corr_instance))
+```
+
+## References
+
+Taillard, Éric. “Benchmarks for Basic Scheduling Problems.” European Journal of Operational Research, vol. 64, no. 2, 1993, pp. 278–85, doi:10.1016/0377-2217(93)90182-M.
+
+Baker, Kenneth R., and Dan Trietsch. “Appendix A: Practical Processing Time Distributions.” Principles of Sequencing and Scheduling, John Wiley & Sons, Ltd, 2009, pp. 445–58, doi:10.1002/9780470451793.app1.
+
+Framinan, J. M., et al. “A Review and Classification of Heuristics for Permutation Flow-Shop Scheduling with Makespan Objective.” Journal of the Operational Research Society, vol. 55, no. 12, Dec. 2004, pp. 1243–55, doi:10.1057/palgrave.jors.2601784.
+
+Watson, Jean-Paul, et al. “Algorithm Performance and Problem Structure for Flow-Shop Scheduling.” AAAI/IAAI, American Association for Artificial Intelligence, 1999, pp. 688–695.

@@ -4,20 +4,37 @@
 \alias{generateFSPInstance}
 \title{Generate flowshop instances with given attributes}
 \usage{
-generateFSPInstance(no_jobs, no_machines, ..., seed = NA)
+generateFSPInstance(
+  no_jobs,
+  no_machines,
+  distribution_type = DISTRIBUTION_TYPES$UNIFORM,
+  correlation_type = CORRELATION_TYPES$JOB_CORRELATED,
+  correlation = 0,
+  ...,
+  seed = NA
+)
 }
 \arguments{
-\item{no_jobs}{Number of jobs}
+\item{no_jobs}{number of jobs}
 
-\item{no_machines}{Number of machines}
+\item{no_machines}{number of machines}
 
-\item{...}{Parameters passed to Instance(...)}
+\item{distribution_type}{processing times distribution}
 
-\item{seed}{Optional random number generator seed}
+\item{correlation_type}{processing times correlation type}
+
+\item{correlation}{correlation value}
+
+\item{...}{additional parameters (not used)}
+
+\item{seed}{optional random number generator seed}
 }
 \value{
 
 }
 \description{
 Generate flowshop instances with given attributes
+}
+\examples{
+generateFSPInstance(20, 5, 'erlang', 'machine-correlated', 0.95)
 }

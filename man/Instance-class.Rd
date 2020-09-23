@@ -13,12 +13,12 @@ Scheduling instance class
 \section{Slots}{
 
 \describe{
-\item{\code{distribution_type}}{integer.}
+\item{\code{.Data}}{unrelated, from matrix class}
 
-\item{\code{correlation_type}}{integer.}
+\item{\code{distribution_type}}{processing times distribution type (uniform, exponential, binomial or erlang)}
 
-\item{\code{correlation}}{numeric.}
+\item{\code{correlation_type}}{processing times correlation type (random, machine-correlated, job-correlated)}
 
-\item{\code{seed}}{integer.}
+\item{\code{correlation}}{correlation value (between 0 and 1)}
 }}
 

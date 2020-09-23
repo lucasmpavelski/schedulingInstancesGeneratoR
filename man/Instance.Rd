@@ -5,27 +5,39 @@
 \title{Scheduling instance constructor}
 \usage{
 Instance(
+  data = NA,
+  nrow = 1,
+  ncol = 1,
+  byrow = FALSE,
+  dimnames = NULL,
   distribution_type = DISTRIBUTION_TYPES$UNIFORM,
   correlation_type = CORRELATION_TYPES$JOB_CORRELATED,
-  correlation = NA_real_,
-  ...
+  correlation = 0
 )
 }
-\value{
+\arguments{
+\item{data}{processing time data}
 
+\item{nrow}{number of jobs}
+
+\item{ncol}{number of machines}
+
+\item{byrow}{processing times order by machine (default) or by job}
+
+\item{dimnames}{name of the processing times matrix dimentions}
+
+\item{distribution_type}{processing times distribution type (uniform, exponential, binomial or erlang)}
+
+\item{correlation_type}{processing times correlation type (random, machine-correlated, job-correlated)}
+
+\item{correlation}{correlation value (between 0 and 1)}
+}
+\value{
+a instance with given processing times
 }
 \description{
 Scheduling instance constructor
 }
-\section{Slots}{
-
-\describe{
-\item{\code{distribution_type}}{integer.}
-
-\item{\code{correlation_type}}{integer.}
-
-\item{\code{correlation}}{numeric.}
-
-\item{\code{seed}}{integer.}
-}}
-
+\examples{
+Instance(1:10, 5, 2, distribution_type = 'uniform')
+}

@@ -2,16 +2,16 @@
 % Please edit documentation in R/Instance.R
 \name{plot,Instance-method}
 \alias{plot,Instance-method}
-\title{Title}
+\title{Plot instance as pairs with correlation.}
 \usage{
 \S4method{plot}{Instance}(x, y, ...)
 }
 \arguments{
-\item{Instance}{}
-}
-\value{
-
+\item{Instance}{instance to be plotted.}
 }
 \description{
-Title
+Plot instance as pairs with correlation.
+}
+\examples{
+plot(generateFSPInstance(100, 3))
 }
