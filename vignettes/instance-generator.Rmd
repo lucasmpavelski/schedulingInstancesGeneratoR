@@ -35,7 +35,7 @@ The shape of each distribution can be seen below:
 
 ```{r, fig.show='hold'}
 for (distribution in c('uniform', 'binomial', 'exponential', 'erlang')) {
-  instance <- generateFSPInstance(
+  instance <- generate_fsp_instance(
     no_jobs = 100,
     no_machines = 10,
     distribution_type = distribution

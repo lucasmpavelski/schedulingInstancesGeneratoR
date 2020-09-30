@@ -10,9 +10,10 @@ Instance(
   ncol = 1,
   byrow = FALSE,
   dimnames = NULL,
-  distribution_type = DISTRIBUTION_TYPES$UNIFORM,
-  correlation_type = CORRELATION_TYPES$JOB_CORRELATED,
-  correlation = 0
+  distribution_type = NA_character_,
+  correlation_type = NA_character_,
+  correlation = 0,
+  seed = NA_integer_
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ Instance(
 \item{correlation_type}{processing times correlation type (random, machine-correlated, job-correlated)}
 
 \item{correlation}{correlation value (between 0 and 1)}
+
+\item{seed}{RNG seed used to generate the processing times}
 }
 \value{
 a instance with given processing times
@@ -39,5 +42,5 @@ a instance with given processing times
 Scheduling instance constructor
 }
 \examples{
-Instance(1:10, 5, 2, distribution_type = 'uniform')
+Instance(1:10, 5, 2, distribution_type = "uniform")
 }

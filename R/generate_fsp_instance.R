@@ -1,10 +1,10 @@
 
 
 rmvnorm <- function(n, mean, cov) {
-  E = eigen(cov, symmetric = TRUE)
-  mean.term = mean
-  covariance.term = E$vec %*% (t(E$vec) * sqrt(E$val))
-  independent.term = matrix(rnorm(n * length(mean)), nrow = length(mean))
+  E <- eigen(cov, symmetric = TRUE)
+  mean.term <- mean
+  covariance.term <- E$vec %*% (t(E$vec) * sqrt(E$val))
+  independent.term <- matrix(rnorm(n * length(mean)), nrow = length(mean))
   drop(t(mean.term + (covariance.term %*% independent.term)))
 }
 
@@ -12,29 +12,33 @@ rmvexp <- function(n,
                    rate = 1,
                    corr = diag(length(rate))) {
   rate <- rep(rate, length.out = ncol(corr))
-  if (ncol(corr) == 1)
+  if (ncol(corr) == 1) {
     rexp(n, rate)
-  Z = rmvnorm(n, rep(0, ncol(corr)), cov = corr)
-  cdf = pnorm(Z)
-  sapply(1:ncol(corr), function(d)
-    qexp(cdf[, d], rate[d]))
+  }
+  Z <- rmvnorm(n, rep(0, ncol(corr)), cov = corr)
+  cdf <- pnorm(Z)
+  sapply(1:ncol(corr), function(d) {
+    qexp(cdf[, d], rate[d])
+  })
 }
 
 rmvunif <- function(n, min, max, corr) {
-  Z = rmvnorm(n, rep(0, ncol(corr)), cov = corr)
-  cdf = pnorm(Z)
-  sapply(1:ncol(corr), function(d)
-    qunif(cdf[, d], min, max))
+  Z <- rmvnorm(n, rep(0, ncol(corr)), cov = corr)
+  cdf <- pnorm(Z)
+  sapply(1:ncol(corr), function(d) {
+    qunif(cdf[, d], min, max)
+  })
 }
 
 rmverlang <- function(n, shape, rate, corr) {
-  Z = rmvnorm(n, rep(0, ncol(corr)), cov = corr)
-  cdf = pnorm(Z)
-  sapply(1:ncol(corr), function(d)
-    qgamma(cdf[, d], shape, rate))
+  Z <- rmvnorm(n, rep(0, ncol(corr)), cov = corr)
+  cdf <- pnorm(Z)
+  sapply(1:ncol(corr), function(d) {
+    qgamma(cdf[, d], shape, rate)
+  })
 }
 
-generateBinomPt <- function(no_jobs, no_machines, correlation) {
+binom_pt <- function(no_jobs, no_machines, correlation) {
   corMat <- diag(no_machines)
   corMat[corMat == 0] <- correlation
   corMat <- 2 * sin(corMat * pi / 6)
@@ -45,28 +49,28 @@ generateBinomPt <- function(no_jobs, no_machines, correlation) {
   qnbinom(U, size = 50, prob = 0.5)
 }
 
-generateExpPt <- function(no_jobs, no_machines, correlation) {
+exp_pt <- function(no_jobs, no_machines, correlation) {
   corMat <- diag(no_machines)
   corMat[corMat == 0] <- correlation
   corMat <- 2 * sin(corMat * pi / 6)
   ceiling(rmvexp(no_jobs, 1.0 / 50, corMat))
 }
 
-generateUnifPt <- function(no_jobs, no_machines, correlation) {
+unif_pt <- function(no_jobs, no_machines, correlation) {
   corMat <- diag(no_machines)
   corMat[corMat == 0] <- correlation
   corMat <- 2 * sin(corMat * pi / 6)
   ceiling(rmvunif(no_jobs, 1, 99, corMat))
 }
 
-generateErlangPt <- function(no_jobs, no_machines, correlation) {
+erlang_pt <- function(no_jobs, no_machines, correlation) {
   corMat <- diag(no_machines)
   corMat[corMat == 0] <- correlation
   corMat <- 2 * sin(corMat * pi / 6)
   ceiling(rmverlang(no_jobs, 4, 4 / 50, corMat))
 }
 
-generatePt <-
+proc_times <-
   function(no_jobs,
            no_machines,
            distribution_type,
@@ -80,10 +84,10 @@ generatePt <-
     dts <- DISTRIBUTION_TYPES
     generators <- setNames(
       c(
-        generateUnifPt,
-        generateBinomPt,
-        generateExpPt,
-        generateErlangPt
+        unif_pt,
+        binom_pt,
+        exp_pt,
+        erlang_pt
       ),
       c(dts$UNIFORM, dts$BINOMIAL, dts$EXPONENTIAL, dts$ERLANG)
     )
@@ -105,18 +109,21 @@ generatePt <-
 #' @param ... additional parameters (not used)
 #' @param seed optional random number generator seed
 #'
-#' @return
-#' @export generateFSPInstance
+#' @return Instance objects with generated processing times
+#'
+#' @export
+#'
 #' @importFrom stats cor pnorm qexp qgamma qnbinom qunif rexp rnorm runif setNames
+#'
 #' @examples
-#' generateFSPInstance(20, 5, 'erlang', 'machine-correlated', 0.95)
-generateFSPInstance <- function(no_jobs,
-                                no_machines,
-                                distribution_type = DISTRIBUTION_TYPES$UNIFORM,
-                                correlation_type = CORRELATION_TYPES$JOB_CORRELATED,
-                                correlation = 0.0,
-                                ...,
-                                seed = NA) {
+#' generate_fsp_instance(20, 5, "erlang", "machine-correlated", 0.95)
+generate_fsp_instance <- function(no_jobs,
+                                  no_machines,
+                                  distribution_type = DISTRIBUTION_TYPES$UNIFORM,
+                                  correlation_type = CORRELATION_TYPES$JOB_CORRELATED,
+                                  correlation = 0.0,
+                                  ...,
+                                  seed = NA_integer_) {
   if (is.na(seed)) {
     seed <- runif(1, 0, .Machine$integer.max)
   }
@@ -128,14 +135,16 @@ generateFSPInstance <- function(no_jobs,
       no_machines,
       distribution_type = distribution_type,
       correlation_type = correlation_type,
-      correlation = correlation
+      correlation = correlation,
+      seed = as.integer(seed)
     )
-  inst[, ] <- generatePt(no_jobs, no_machines,
-                         distribution_type = distribution_type,
-                         correlation_type = correlation_type,
-                         correlation = correlation,
-                         ...)
+  inst[, ] <- proc_times(no_jobs, no_machines,
+    distribution_type = distribution_type,
+    correlation_type = correlation_type,
+    correlation = correlation,
+    ...
+  )
   dimnames(inst) <-
-    list(paste('job', 1:nrow(inst)), paste('mach', 1:ncol(inst)))
+    list(paste("job", 1:nrow(inst)), paste("mach", 1:ncol(inst)))
   inst
 }
