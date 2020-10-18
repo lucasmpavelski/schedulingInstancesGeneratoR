@@ -5,7 +5,7 @@
 #' ...
 #'
 #' @param file file connection or path
-#' @param sep separator used to write dimentions and processing times
+#' @param sep separator used to write dimensions and processing times
 #' @param ... parameters passed to Instance
 #'
 #' @return Instance object
@@ -16,7 +16,7 @@
 #' write_txt(generate_fsp_instance(10, 5), "example")
 #' read_txt("example")
 read_txt <- function(file = "data",
-                     sep = " ",
+                     sep = "",
                      ...) {
   dt <- as.matrix(read.delim2(file, sep = sep, header = F, skip = 1))
   Instance(dt, nrow(dt), ncol(dt), ...)
