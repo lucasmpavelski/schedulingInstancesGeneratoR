@@ -8,12 +8,12 @@ ProcTime11 ProcTime12 ...
 ProcTime21 ProcTime22 ...
 ...}
 \usage{
-read_txt(file = "data", sep = " ", ...)
+read_txt(file = "data", sep = "", ...)
 }
 \arguments{
 \item{file}{file connection or path}
 
-\item{sep}{separator used to write dimentions and processing times}
+\item{sep}{separator used to write dimensions and processing times}
 
 \item{...}{parameters passed to Instance}
 }

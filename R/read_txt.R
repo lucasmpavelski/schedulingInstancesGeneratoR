@@ -11,6 +11,7 @@
 #' @return Instance object
 #'
 #' @export read_txt
+#' @importFrom utils read.delim2
 #'
 #' @examples
 #' write_txt(generate_fsp_instance(10, 5), "example")
